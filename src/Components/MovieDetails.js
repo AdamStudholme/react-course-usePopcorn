@@ -20,7 +20,12 @@ import { Loader } from '../App';
 //     </div>
 //   );
 // }
-export function MovieDetails({ selectedId, onCloseMovie, onAddWatched }) {
+export function MovieDetails({
+  selectedId,
+  onCloseMovie,
+  onAddWatched,
+  watched,
+}) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState('');
@@ -37,6 +42,11 @@ export function MovieDetails({ selectedId, onCloseMovie, onAddWatched }) {
     Director: director,
     Genre: genre,
   } = movie;
+
+  const isWatched = watched.map(movie => movie.imdbID).includes(selectedId);
+  const watchedRating = watched.find(
+    movie => movie.imdbID === selectedId
+  )?.userRating;
 
   function handleAdd() {
     const newWatchedMovie = {
@@ -103,16 +113,24 @@ export function MovieDetails({ selectedId, onCloseMovie, onAddWatched }) {
           </header>
           <section>
             <div className="rating">
-              <StarRating
-                maxRating={10}
-                size={24}
-                onSetRating={setUserRating}
-              />
-              {userRating > 0 && (
-                <button className="btn-add" onClick={handleAdd}>
-                  {' '}
-                  + Add to list
-                </button>
+              {!isWatched ? (
+                <>
+                  <StarRating
+                    maxRating={10}
+                    size={24}
+                    onSetRating={setUserRating}
+                  />
+                  {userRating > 0 && (
+                    <button className="btn-add" onClick={handleAdd}>
+                      {' '}
+                      + Add to list
+                    </button>
+                  )}
+                </>
+              ) : (
+                <div>
+                  <p>Your Rating: ⭐ {watchedRating}</p>
+                </div>
               )}
             </div>
             <p>
